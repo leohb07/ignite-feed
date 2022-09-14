@@ -7,7 +7,9 @@ import { Comment } from "../Comment/Comment";
 import styles from "./Post.module.css";
 
 export function Post({ author, publishedAt, content}) {
-  const [comments, setComments] = useState([]);
+  const [comments, setComments] = useState([
+    'Post maneiro Diego !!',
+  ]);
   const [newCommentText, setNewCommentText] = useState('');
 
   const publishedDateFormatted = format(publishedAt, "d 'de' LLLL 'as' HH:mm'h'", {
@@ -29,6 +31,10 @@ export function Post({ author, publishedAt, content}) {
     setNewCommentText(event.target.value);
   }
 
+  function deleteComment(comment) {
+    console.log(`Deletar comentário ${comment}`);
+  }
+
   return (
     <article className={styles.post}>
       <header>
@@ -48,9 +54,9 @@ export function Post({ author, publishedAt, content}) {
       <div className={styles.content}>
         {content.map(item => {
           if (item.type === 'paragraph') {
-            return <p>{item.content}</p>
+            return <p key={item.content} >{item.content}</p>
           } else if (item.type === 'link') {
-            return <p><a href='#'>{item.content}</a></p>
+            return <p key={item.content}><a href='#'>{item.content}</a></p>
           }
         })}
       </div>
@@ -72,7 +78,11 @@ export function Post({ author, publishedAt, content}) {
       <div className={styles.commentList}>
         {comments.map(comment => {
           return (
-            <Comment content={comment}/>
+            <Comment 
+              key={comment}
+              content={comment}
+              onDeleteComment={deleteComment}
+            />
           );
         })}
       </div>
