@@ -6,7 +6,7 @@ import { Comment } from "../Comment/Comment";
 
 import styles from "./Post.module.css";
 
-export function Post({ author, publishedAt, content}) {
+export function Post({ author, publishedAt, content, linkUrl }) {
   const [comments, setComments] = useState([
     'Post maneiro Diego !!',
   ]);
@@ -28,12 +28,23 @@ export function Post({ author, publishedAt, content}) {
   };
 
   function handleNewCommentText() {
+    event.target.setCustomValidity('');
     setNewCommentText(event.target.value);
+  };
+
+  function handleNewCommentTextInvalid() {
+    event.target.setCustomValidity('Campo obrigatório');
   }
 
-  function deleteComment(comment) {
-    console.log(`Deletar comentário ${comment}`);
+  function deleteComment(commentToDelete) {
+    const commentWithoutDeleteOne = comments.filter(comment => {
+      return comment !== commentToDelete
+    });
+
+    setComments(commentWithoutDeleteOne);
   }
+
+  const isDisabledCommentTextEmpty = newCommentText.length === 0;
 
   return (
     <article className={styles.post}>
@@ -56,7 +67,7 @@ export function Post({ author, publishedAt, content}) {
           if (item.type === 'paragraph') {
             return <p key={item.content} >{item.content}</p>
           } else if (item.type === 'link') {
-            return <p key={item.content}><a href='#'>{item.content}</a></p>
+            return <p key={item.content}><a target="_blank" href={`https://github.com/${linkUrl}`}>{item.content}</a></p>
           }
         })}
       </div>
@@ -68,10 +79,14 @@ export function Post({ author, publishedAt, content}) {
           value={newCommentText}
           onChange={handleNewCommentText}
           placeholder="Deixe um comentário"
+          onInvalid={handleNewCommentTextInvalid}
+          required
         />
 
         <footer>
-          <button type="submit">Publicar</button>
+          <button disabled={isDisabledCommentTextEmpty} type="submit">
+            Publicar
+          </button>
         </footer>
       </form>
 
